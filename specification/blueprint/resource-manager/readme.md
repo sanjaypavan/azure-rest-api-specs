@@ -34,7 +34,8 @@ These settings apply only when `--tag=package-2017-11-preview` is specified on t
 
 ``` yaml $(tag) == 'package-2017-11-preview'
 input-file:
-- Microsoft.Blueprint/preview/2017-11-11-preview/blueprint.json
+- Microsoft.Blueprint/preview/2017-11-11-preview/blueprintDefinition.json
+- Microsoft.Blueprint/preview/2017-11-11-preview/blueprintAssignment.json
 ```
 
 ---
@@ -96,6 +97,10 @@ python:
   output-folder: $(python-sdks-folder)/azure-mgmt-blueprint
 ```
 
+## Go
+
+See configuration in [readme.go.md](./readme.go.md)
+
 ## Java
 
 These settings apply only when `--java` is specified on the command line.
@@ -117,18 +122,19 @@ java:
 
 ``` yaml
 directive:
-  - from: blueprint.json
-    suppress: R3006  # BodyTopLevelProperties/R3006/RPCViolation
-    reason: properties etag defined as eTag in model
-  - from: blueprint.json
-    suppress: R3026 # Tracked resource 'XXX' must have patch operation that at least supports the update of tags.
+  - from: blueprintAssignment.json
+    suppress: TrackedResourcePatchOperation 
     reason: Assignment is proxy resource.
-  - from: blueprint.json
+  - from: blueprintDefinition.json
     suppress: UniqueResourcePaths
     where: $.paths
     reason: Microsoft.Management is a proxy resource provider
-  - from: blueprint.json
+  - from: blueprintAssignment.json
     suppress: OperationsAPIImplementation
     where: $.paths
     reason: OperationsAPI for Microsoft.Management is out of scope.
+  - from: blueprintDefinition.json
+    suppress: OperationsAPIImplementation
+    where: $.paths
+    reason: OperationsAPI for Microsoft.Management is out of scope.    
 ```
